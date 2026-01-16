@@ -1,21 +1,22 @@
-public class Session implements Comparable<Session>
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class Session
 {
-    private int[] numsDate;
     private String date;
     private Climb[] climbsList;
+    private int[] grades;
+    private int numClimbs;
 
     public Session(String date)
     {
-        climbsList = new Climb[0];
         this.date = date;
-        try
-        {
-            this.numsDate = parseDate(date);
-        }
-        catch (IllegalArgumentException e)
-        {
-            System.out.println(e.getMessage());
-        }
+        climbsList = new Climb[0];
+        grades = new int[15];
     }
 
     public void addClimb(Climb climb)
@@ -27,84 +28,92 @@ public class Session implements Comparable<Session>
         }
         temp[temp.length - 1] = climb;
         climbsList = temp;
+        ++numClimbs;
     }
 
-    public void finishSession()
+    public void finishSession() throws IOException
     {
         
+        try (java.io.PrintWriter output = new java.io.PrintWriter(
+            new FileWriter("ClimbingHistory.txt", true));)
+        {
+            output.print(toString() + "\n\n");
+        }
     }
 
-    public int[] parseDate(String date) throws IllegalArgumentException
+    public void askForClimbs()
     {
-        int[] result = new int[3];
-        String[] numsDate = date.split("/");
-        try 
+        Scanner input = new Scanner(System.in);
+
+        while (true)
         {
-            for (int i = 0; i < 3; ++i)
+            System.out.println("Enter name of climb or 'f' to finish: ");
+            String name = input.nextLine();
+            if (name.equals("f"))
             {
-                result[i] = Integer.parseInt(numsDate[i]);
+                break;
+            }
+
+            System.out.println("Enter grade: ");
+            int grade = input.nextInt();
+            input.nextLine();
+
+            System.out.println("Enter # of attempts: ");
+            int attempts = input.nextInt();
+            input.nextLine();
+
+            System.out.println("Did you send the climb? (yes/no) ");
+            String sentYesNo = input.nextLine();
+            boolean sent = false;
+            if (sentYesNo.equals("yes"))
+            {
+                sent = true;
+                ++grades[grade];
+            }
+
+            Climb climb = new Climb(name, grade, attempts, sent);
+            addClimb(climb);
+        }
+
+        input.close();
+
+        try
+        {
+            finishSession();
+            updateGradeDistribution();
+        }
+        catch(FileNotFoundException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        catch(IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void updateGradeDistribution() throws FileNotFoundException, IOException
+    {
+        File GD = new File("GradeDistribution.txt");
+
+        int[] prevGrades = new int[grades.length];
+        try (Scanner input = new Scanner(GD);)
+        {
+            for (int i = 0; i < grades.length; ++i)
+            {
+                String line = input.nextLine();
+                String num = line.substring(line.indexOf(" ") + 1);
+                prevGrades[i] = Integer.parseInt(num);
             }
         }
-        catch(Exception e)
-        {
-            throw new IllegalArgumentException("Date should be in format MM/DD/YYYY");
-        }
 
-        boolean validMonth = (result[0] > 12 || result[0] < 1);
-        boolean validDay = (result[0] > 31 || result[0] < 1);
-        boolean validYear = (result[0] > 2050 || result[0] < 2020);
-
-        if (!validMonth)
+        try(java.io.PrintWriter output = new java.io.PrintWriter(GD);)
         {
-            throw new IllegalArgumentException("Enter valid month (01-12)");
+            for (int i = 0; i < grades.length; ++i)
+            {
+                output.print("V" + i + ": " + (grades[i] + prevGrades[i]) + "\n");
+            }
         }
-        if (!validDay)
-        {
-            throw new IllegalArgumentException("Enter valid day (1-31)");
-        }
-        if (!validYear)
-        {
-            throw new IllegalArgumentException("Enter valid year (Ex. 2025)");
-        }
-
-        return result;
-    }
-
-    @Override
-    public int compareTo(Session obj)
-    {
-        // Check year
-        if (numsDate[2] > obj.numsDate[2])
-        {
-            return 1;
-        }
-        if (numsDate[2] < obj.numsDate[2])
-        {
-            return -1;
-        }
-
-        // Check month
-        if (numsDate[1] > obj.numsDate[1])
-        {
-            return 1;
-        }
-        if (numsDate[1] < obj.numsDate[1])
-        {
-            return -1;
-        }
-
-        // Check day
-        if (numsDate[0] > obj.numsDate[0])
-        {
-            return 1;
-        }
-        if (numsDate[0] < obj.numsDate[0])
-        {
-            return -1;
-        }
-
-        // Same date
-        return 0;
     }
 
     @Override
@@ -120,31 +129,14 @@ public class Session implements Comparable<Session>
 
     public static void main(String[] args)
     {
-        Climb climb1 = new Climb("Warm Me Up", 4, 1, true);
-        Climb climb2 = new Climb("Biggy Smalls", 5, 1, true);
-        Climb climb3 = new Climb("Rightness Pt.3", 5, 2, true);
-        Climb climb4 = new Climb("Kemal's Var", 6, 1, true);
-        Climb climb5 = new Climb("L'Ho Duro Duro", 7, 1, true);
-        Climb climb6 = new Climb("Jordan Var", 8, 4, true);
-        Climb climb7 = new Climb("Kokolo", 8, 1, true);
-        Climb climb8 = new Climb("Mark's Favorite Problem", 8, 17, true);
-        Climb climb9 = new Climb("Stooked", 8, 3, true);
-        Climb climb10 = new Climb("Penay Colada", 8, 2, true);
-        Climb climb11 = new Climb("Captain Fitzroy", 8, 3, false);
+        Scanner input = new Scanner(System.in);
 
-        Session mejor = new Session("02/11/2025");
-        mejor.addClimb(climb1);
-        mejor.addClimb(climb2);
-        mejor.addClimb(climb3);
-        mejor.addClimb(climb4);
-        mejor.addClimb(climb5);
-        mejor.addClimb(climb6);
-        mejor.addClimb(climb7);
-        mejor.addClimb(climb8);
-        mejor.addClimb(climb9);
-        mejor.addClimb(climb10);
-        mejor.addClimb(climb11);
+        System.out.println("Enter date of session: ");
+        String date = input.nextLine();
+        Session sesh = new Session(date);
 
-        System.out.println(mejor);
+        sesh.askForClimbs();
+
+        input.close();
     }
 }

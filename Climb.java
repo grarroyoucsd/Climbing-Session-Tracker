@@ -13,6 +13,16 @@ public class Climb
         this.sent = sent;
     }
 
+    public int getGrade()
+    {
+        return grade;
+    }
+
+    public boolean getSent()
+    {
+        return sent;
+    }
+
     @Override
     public String toString()
     {
