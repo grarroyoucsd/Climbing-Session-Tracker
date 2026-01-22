@@ -10,7 +10,6 @@ public class Session
     private String date;
     private Climb[] climbsList;
     private int[] grades;
-    private int numClimbs;
 
     public Session(String date)
     {
@@ -28,7 +27,6 @@ public class Session
         }
         temp[temp.length - 1] = climb;
         climbsList = temp;
-        ++numClimbs;
     }
 
     public void finishSession() throws IOException
