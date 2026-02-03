@@ -4,29 +4,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Session
 {
     private String date;
-    private Climb[] climbsList;
+    private ArrayList<Climb> climbsList;
     private int[] grades;
 
     public Session(String date)
     {
         this.date = date;
-        climbsList = new Climb[0];
+        climbsList = new ArrayList<>();
         grades = new int[15];
-    }
-
-    public void addClimb(Climb climb)
-    {
-        Climb[] temp = new Climb[climbsList.length + 1];
-        for (int i = 0; i < climbsList.length; ++i)
-        {
-            temp[i] = climbsList[i];
-        }
-        temp[temp.length - 1] = climb;
-        climbsList = temp;
     }
 
     public void finishSession() throws IOException
@@ -70,7 +60,7 @@ public class Session
             }
 
             Climb climb = new Climb(name, grade, attempts, sent);
-            addClimb(climb);
+            climbsList.add(climb);
         }
 
         input.close();
