@@ -11,6 +11,7 @@ public class Session
     private String date;
     private ArrayList<Climb> climbsList;
     private int[] grades;
+    private int climbsSent;
 
     public Session(String date)
     {
@@ -90,14 +91,27 @@ public class Session
                     }
                 }
 
-                // Work on!!!
-                System.out.println("Did you send the climb? (yes/no) ");
-                String sentYesNo = input.nextLine();
-                boolean sent = false;
-                if (sentYesNo.equals("yes"))
+                boolean sent;
+                while (true)
                 {
-                    sent = true;
-                    ++grades[grade];
+                    System.out.println("Did you send the climb? (yes/no) ");
+                    String yesNo = input.nextLine().trim().toLowerCase();
+                    if (yesNo.equals("yes"))
+                    {
+                        sent = true;
+                        ++climbsSent;
+                        break;
+                    }
+                    else if (yesNo.equals("no"))
+                    {
+                        sent = false;
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println("Incorrect input, please enter 'yes' or 'no'");
+                        input.nextLine();
+                    }
                 }
 
                 Climb climb = new Climb(name, grade, attempts, sent);
@@ -177,7 +191,7 @@ public class Session
         {
             climbsListStr += "\n" + climbsList.get(i);
         }
-        return date + climbsListStr;
+        return date + climbsListStr + "\n Total Climbs Attempted: " + climbsList.length + ", Total Climbs Sent: " + climbsSent;
     }
 
     public static void main(String[] args)
