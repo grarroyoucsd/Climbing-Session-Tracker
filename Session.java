@@ -100,6 +100,7 @@ public class Session
                     {
                         sent = true;
                         ++climbsSent;
+                        ++grades[grade];
                         break;
                     }
                     else if (yesNo.equals("no"))
@@ -158,7 +159,7 @@ public class Session
         }
     }
 
-    public class protected Climb
+    protected class Climb
     {
 
         private String name;
@@ -191,7 +192,7 @@ public class Session
         {
             climbsListStr += "\n" + climbsList.get(i);
         }
-        return date + climbsListStr + "\n Total Climbs Attempted: " + climbsList.length + ", Total Climbs Sent: " + climbsSent;
+        return date + climbsListStr + "\n Total Climbs Attempted: " + climbsList.size() + ", Total Climbs Sent: " + climbsSent;
     }
 
     public static void main(String[] args)
