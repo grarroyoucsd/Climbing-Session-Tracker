@@ -151,11 +151,32 @@ public class Session
 
         try(java.io.PrintWriter output = new java.io.PrintWriter(GD);)
         {
+            int totalClimbs = 0;
+            int totalGrades = 0;
+
             for (int i = 0; i < grades.length; ++i)
             {
                 output.print("V" + i + ": " + (grades[i] + prevGrades[i]) + "\n");
+
+                totalClimbs += grades[i] + prevGrades[i];
+                totalGrades += (grades[i] + prevGrades[i]) * i;
             }
+
+            output.print("\nTotal Climbs: " + totalClimbs);
+            int avgGrade = (totalClimbs == 0) ? 0 : totalGrades / totalClimbs;
+            output.print("\nAverage Grade: " + avgGrade);
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        String climbsListStr = "";
+        for (int i = 0; i < climbsList.size(); ++i)
+        {
+            climbsListStr += "\n" + climbsList.get(i);
+        }
+        return date + climbsListStr + "\nTotal Climbs Attempted: " + climbsList.size() + ", Total Climbs Sent: " + climbsSent;
     }
 
     protected class Climb
@@ -181,17 +202,6 @@ public class Session
             return "Name: " + name + ", Grade: V" + grade +
                 "\nAttempts: " + attempts + " Status: " + status; 
         }
-    }
-
-    @Override
-    public String toString()
-    {
-        String climbsListStr = "";
-        for (int i = 0; i < climbsList.size(); ++i)
-        {
-            climbsListStr += "\n" + climbsList.get(i);
-        }
-        return date + climbsListStr + "\n Total Climbs Attempted: " + climbsList.size() + ", Total Climbs Sent: " + climbsSent;
     }
 
     public static void main(String[] args)
