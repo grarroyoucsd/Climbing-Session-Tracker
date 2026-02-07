@@ -1,1 +1,1 @@
-#Climbing Session Tracker
+Climbing Session Tracker
