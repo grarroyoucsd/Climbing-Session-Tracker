@@ -111,7 +111,6 @@ public class Session
                     else
                     {
                         System.out.println("Incorrect input, please enter 'yes' or 'no'");
-                        input.nextLine();
                     }
                 }
 
@@ -178,7 +177,7 @@ public class Session
         @Override
         public String toString()
         {
-            String status = (sent) ? "Sent ✅" : "In Progress...";
+            String status = (sent) ? ((attempts == 1) ? "⚡Flash ✅" : "Sent ✅") : "In Progress...";
             return "Name: " + name + ", Grade: V" + grade +
                 "\nAttempts: " + attempts + " Status: " + status; 
         }
@@ -197,7 +196,7 @@ public class Session
 
     public static void main(String[] args)
     {
-        try(Scanner input = new Scanner(System.in);)
+        Scanner input = new Scanner(System.in);
         {
             System.out.println("Enter date of session: ");
             String date = input.nextLine();
@@ -205,5 +204,6 @@ public class Session
 
             sesh.askForClimbs();
         }
+        input.close();
     }
 }
