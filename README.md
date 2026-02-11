@@ -1,4 +1,4 @@
-# Climbing Session Tracker (Written by AI)
+# Climbing Session Tracker
 
 A Java command-line application for logging indoor climbing sessions, tracking grade distributions, and maintaining persistent climbing history using text files.
 
